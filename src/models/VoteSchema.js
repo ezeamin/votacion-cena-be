@@ -12,12 +12,12 @@ const voteSchema = new mongoose.Schema({
   token: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
   },
   ip: {
     type: String,
     required: true,
-    unique: true,
+    // unique: true,
   },
 });
 
