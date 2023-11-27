@@ -1,53 +1,20 @@
-import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
-import { Server } from 'socket.io';
-import { createServer } from 'node:http';
-
-// Initializations
-const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-  connectionStateRecovery: {
-    attempts: 3,
-  },
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-});
+import { socketHandler } from './handlers/socket';
+import { app, io, server } from './server';
 
 // Settings
-const port = process.env.PORT ?? 3000;
+const port = process.env.PORT || 3000;
 
 // Middlewares
 app.use(morgan('dev'));
 app.use(cors());
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+// Websocket
+io.on('connection', socketHandler);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-
-  socket.on('disconnect', () => {
-    console.log('a user disconnected');
-  });
-
-  socket.on('chat message', (message) => {
-    console.log('message: ', message);
-    io.emit('chat message', message);
-  });
-
-  if(!socket.recovered) {
-    // Traer datos desde una DB
-  }
-});
-
-// Server
+// Server loop
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
