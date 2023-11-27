@@ -1,8 +1,10 @@
 import morgan from 'morgan';
 import cors from 'cors';
 
-import { socketHandler } from './handlers/socket';
-import { app, io, server } from './server';
+import { socketHandler } from './socket/socket.js';
+import { app, io, server } from './server.js';
+
+import './database/database.js';
 
 // Settings
 const port = process.env.PORT || 3000;
