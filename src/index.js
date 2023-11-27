@@ -9,6 +9,9 @@ import { createServer } from 'node:http';
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
+  connectionStateRecovery: {
+    attempts: 3,
+  },
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
@@ -38,6 +41,10 @@ io.on('connection', (socket) => {
     console.log('message: ', message);
     io.emit('chat message', message);
   });
+
+  if(!socket.recovered) {
+    // Traer datos desde una DB
+  }
 });
 
 // Server
