@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const voteSchema = new mongoose.Schema({
-  general: {
+  king: {
     type: String,
     required: true,
   },
-  office: {
+  queen: {
     type: String,
     required: true,
   },
