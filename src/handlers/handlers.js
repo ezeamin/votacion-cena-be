@@ -17,11 +17,9 @@ export const onConnect = async (_socket) => {
   connectedUsers += 1;
   console.log('Connected users: ', connectedUsers, '\n');
 
-  const remoteUrl = socket.request.headers.referer;
-
-  if (!socket.recovered && remoteUrl.includes('results')) {
+  if (!socket.recovered) {
     try {
-      const votes = await VoteModel.find();
+      const votes = await VoteModel.find().select('king queen -_id');
       io.to(socket.id).emit('votes', votes);
     } catch (e) {
       io.to(socket.id).emit('error', e.message);
@@ -60,5 +58,11 @@ export const onNewVote = async (data) => {
   console.log('\n🎉 New vote registered! ->', data, '\n');
 
   io.to(socket.id).emit('success');
-  io.emit('new vote', data);
+
+  try {
+    const votes = await VoteModel.find().select('king queen -_id');
+    io.emit('votes', votes);
+  } catch (e) {
+    io.to(socket.id).emit('error', e.message);
+  }
 };
