@@ -3,6 +3,7 @@ import {
   onDisconnect,
   onNewTimer,
   onNewVote,
+  onTerminateTimer,
   onUntie,
 } from '../handlers/handlers.js';
 
@@ -16,4 +17,6 @@ export const socketHandler = async (socket) => {
   socket.on('new random winner', onUntie);
 
   socket.on('start timer', onNewTimer);
+
+  socket.on('stop timer', onTerminateTimer);
 };

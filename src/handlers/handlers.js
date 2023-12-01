@@ -10,6 +10,7 @@ let socket = null;
 // initialize a 5 minute timer
 let timer = 300;
 let timerRunning = false;
+let interval = null;
 
 export const onConnect = async (_socket) => {
   socket = _socket;
@@ -47,10 +48,7 @@ export const onDisconnect = () => {
 
 export const onNewVote = async (data) => {
   if (!timerRunning) {
-    io.to(socket.id).emit(
-      'error',
-      'No estás en tiempo de votación!',
-    );
+    io.to(socket.id).emit('error', 'No estás en tiempo de votación!');
     return;
   }
 
@@ -113,8 +111,8 @@ export const onUntie = async (data) => {
   }
 };
 
-export const onNewTimer = async () => {
-  if (timer !== 301) {
+export const onNewTimer = () => {
+  if (timerRunning) {
     io.to(socket.id).emit('error', 'El timer ya está corriendo!');
     return;
   }
@@ -126,7 +124,7 @@ export const onNewTimer = async () => {
   io.emit('timer', timer);
 
   // create a new interval - emit every 10 seconds
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     timer -= 20;
     if (timer <= 0) {
       timer = 300;
@@ -137,4 +135,21 @@ export const onNewTimer = async () => {
     }
     io.emit('timer', timer);
   }, 20000);
+};
+
+export const onTerminateTimer = () => {
+  if (!timerRunning) {
+    io.to(socket.id).emit('error', 'El timer no está corriendo!');
+    return;
+  }
+
+  console.log('\n⏱ Timer terminated!\n');
+
+  timer = 300;
+  timerRunning = false;
+
+  clearInterval(interval);
+
+  io.emit('no timer', timer);
+  io.emit('timer finished', timer);
 };
