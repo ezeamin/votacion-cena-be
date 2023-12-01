@@ -47,6 +47,7 @@ export const onDisconnect = () => {
 
 export const onNewVote = async (data) => {
   if (!timerRunning) {
+    console.log('\n😳 Intento de voto fuera de tiempo ->', token, '\n');
     io.to(socket.id).emit('error', 'No estás en tiempo de votación!');
     return;
   }
