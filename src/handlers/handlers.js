@@ -33,6 +33,7 @@ export const onConnect = async (_socket) => {
       );
       io.to(socket.id).emit('votes', votes);
     } catch (e) {
+      console.log(e.message);
       io.to(socket.id).emit('error', e.message);
     }
   }
@@ -60,6 +61,7 @@ export const onNewVote = async (data) => {
 
     await newVote.save();
   } catch (e) {
+    console.log(e.message);
     if (e.message.includes('duplicate')) {
       console.log('\n😳 Intento de voto duplicado ->', token);
 
@@ -79,6 +81,7 @@ export const onNewVote = async (data) => {
     const votes = await VoteModel.find().select('king queen shouldCount -_id');
     io.emit('votes', votes);
   } catch (e) {
+    console.log(e.message);
     io.to(socket.id).emit('error', e.message);
   }
 };
@@ -91,12 +94,12 @@ export const onUntie = async (data) => {
       king: type === 'king' ? person : undefined,
       queen: type === 'queen' ? person : undefined,
       token: 'UNTIE',
-      ip: 'UNTIE',
       shouldCount: false,
     });
 
     await newVote.save();
   } catch (e) {
+    console.log(e.message);
     io.to(socket.id).emit('error', e.message);
   }
 
@@ -104,6 +107,7 @@ export const onUntie = async (data) => {
     const votes = await VoteModel.find().select('king queen shouldCount -_id');
     io.emit('votes', votes);
   } catch (e) {
+    console.log(e.message);
     io.to(socket.id).emit('error', e.message);
   }
 };
