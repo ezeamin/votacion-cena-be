@@ -73,7 +73,7 @@ export const onNewVote = async (data) => {
     return;
   }
 
-  console.log('\n🎉 New vote registered! ->', data, '\n');
+  console.log('\n🎉 New vote registered! ->', data, ' -> ', token, '\n');
 
   io.to(socket.id).emit('success');
 
