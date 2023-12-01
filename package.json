@@ -5,9 +5,9 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "dev": "node --env-file=.env --watch src/index.js",
+    "dev": "node --watch src/index.js",
     "build": "esbuild src/index.js --bundle --platform=node --outfile=dist/index.cjs --minify",
-    "start": "node --env-file=.env dist/index.cjs",
+    "start": "node dist/index.cjs",
     "lint": "eslint . --fix"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mongoose": "^8.0.1",
     "morgan": "^1.10.0",
