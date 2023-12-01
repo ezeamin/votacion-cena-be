@@ -10,13 +10,13 @@ import {
 export const socketHandler = async (socket) => {
   onConnect(socket);
 
-  socket.on('disconnect', onDisconnect);
+  socket.on('disconnect', (data) => onDisconnect(socket, data));
 
-  socket.on('new vote', onNewVote);
+  socket.on('new vote', (data) => onNewVote(socket, data));
 
-  socket.on('new random winner', onUntie);
+  socket.on('new random winner', (data) => onUntie(socket, data));
 
-  socket.on('start timer', onNewTimer);
+  socket.on('start timer', (data) => onNewTimer(socket, data));
 
-  socket.on('stop timer', onTerminateTimer);
+  socket.on('stop timer', (data) => onTerminateTimer(socket, data));
 };
