@@ -1,14 +1,8 @@
 import mongoose from 'mongoose';
 
 const voteSchema = new mongoose.Schema({
-  king: {
-    type: String,
-    required: true,
-  },
-  queen: {
-    type: String,
-    required: true,
-  },
+  king: String,
+  queen: String,
   token: {
     type: String,
     required: true,
@@ -19,6 +13,7 @@ const voteSchema = new mongoose.Schema({
     required: true,
     // unique: true,
   },
+  shouldCount: Boolean,
 });
 
 export default mongoose.model('Votes', voteSchema);

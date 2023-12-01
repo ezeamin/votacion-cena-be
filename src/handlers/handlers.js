@@ -19,7 +19,7 @@ export const onConnect = async (_socket) => {
 
   if (!socket.recovered) {
     try {
-      const votes = await VoteModel.find().select('king queen -_id');
+      const votes = await VoteModel.find().select('king queen shouldCount -_id');
       io.to(socket.id).emit('votes', votes);
     } catch (e) {
       io.to(socket.id).emit('error', e.message);
@@ -40,6 +40,7 @@ export const onNewVote = async (data) => {
       queen: data.queen,
       token,
       ip: address,
+      shouldCount: true,
     });
 
     await newVote.save();
@@ -60,7 +61,32 @@ export const onNewVote = async (data) => {
   io.to(socket.id).emit('success');
 
   try {
-    const votes = await VoteModel.find().select('king queen -_id');
+    const votes = await VoteModel.find().select('king queen shouldCount -_id');
+    io.emit('votes', votes);
+  } catch (e) {
+    io.to(socket.id).emit('error', e.message);
+  }
+};
+
+export const onUntie = async (data) => {
+  const { type, person } = data;
+
+  try {
+    const newVote = new VoteModel({
+      king: type === 'king' ? person : undefined,
+      queen: type === 'queen' ? person : undefined,
+      token: 'UNTIE',
+      ip: 'UNTIE',
+      shouldCount: false,
+    });
+
+    await newVote.save();
+  } catch (e) {
+    io.to(socket.id).emit('error', e.message);
+  }
+
+  try {
+    const votes = await VoteModel.find().select('king queen shouldCount -_id');
     io.emit('votes', votes);
   } catch (e) {
     io.to(socket.id).emit('error', e.message);
