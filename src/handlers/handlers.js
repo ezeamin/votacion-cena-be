@@ -114,7 +114,7 @@ export const onNewTimer = () => {
     return;
   }
 
-  console.log('\n⏱ Timer started!\n');
+  console.log('\n⏱  Timer started!\n');
 
   timerRunning = true;
 
@@ -129,6 +129,7 @@ export const onNewTimer = () => {
       io.emit('no timer', timer);
       io.emit('timer finished', timer);
       clearInterval(interval);
+      return;
     }
     io.emit('timer', timer);
   }, 20000);
