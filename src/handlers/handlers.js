@@ -129,6 +129,7 @@ export const onNewTimer = () => {
     timer -= 20;
     if (timer <= 0) {
       timer = 300;
+      timerRunning = false;
       console.log('\n⏱ Timer finished!\n');
       io.emit('no timer', timer);
       io.emit('timer finished', timer);
