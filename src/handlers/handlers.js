@@ -94,7 +94,7 @@ export const onUntie = async (socket, data) => {
     const newVote = new VoteModel({
       king: type === 'king' ? person : undefined,
       queen: type === 'queen' ? person : undefined,
-      token: `UNTIE-${type}`,
+      token: `UNTIE-${type}-${(Math.random() * 100000).toString()}`,
       shouldCount: false,
     });
 
