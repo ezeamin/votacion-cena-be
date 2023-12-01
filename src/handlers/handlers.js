@@ -3,7 +3,6 @@ import { io } from '../server.js';
 import VoteModel from '../models/VoteSchema.js';
 
 let connectedUsers = 0;
-let address = '';
 let token = '';
 let socket = null;
 
@@ -15,10 +14,9 @@ let interval = null;
 export const onConnect = async (_socket) => {
   socket = _socket;
 
-  address = socket.request.connection.remoteAddress;
   token = socket.handshake.auth.token;
 
-  console.log('\n✨ New user connected ->', address);
+  console.log('\n✨ New user connected ->', token);
   connectedUsers += 1;
   console.log('Connected users: ', connectedUsers, '\n');
 
@@ -41,7 +39,7 @@ export const onConnect = async (_socket) => {
 };
 
 export const onDisconnect = () => {
-  console.log('\n💨 One user disconnected ->', address);
+  console.log('\n💨 One user disconnected ->', token);
   connectedUsers -= 1;
   console.log('Connected users: ', connectedUsers, '\n');
 };
@@ -57,14 +55,13 @@ export const onNewVote = async (data) => {
       king: data.king,
       queen: data.queen,
       token,
-      ip: address,
       shouldCount: true,
     });
 
     await newVote.save();
   } catch (e) {
     if (e.message.includes('duplicate')) {
-      console.log('\n😳 Intento de voto duplicado ->', address);
+      console.log('\n😳 Intento de voto duplicado ->', token);
 
       io.to(socket.id).emit('error', 'Ya votaste!');
       return;
