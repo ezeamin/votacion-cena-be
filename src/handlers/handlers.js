@@ -7,6 +7,9 @@ let address = '';
 let token = '';
 let socket = null;
 
+// initialize a 5 minute timer
+let timer = 301;
+
 export const onConnect = async (_socket) => {
   socket = _socket;
 
@@ -17,9 +20,15 @@ export const onConnect = async (_socket) => {
   connectedUsers += 1;
   console.log('Connected users: ', connectedUsers, '\n');
 
+  if (timer !== 301) {
+    io.to(socket.id).emit('timer', timer);
+  }
+
   if (!socket.recovered) {
     try {
-      const votes = await VoteModel.find().select('king queen shouldCount -_id');
+      const votes = await VoteModel.find().select(
+        'king queen shouldCount -_id',
+      );
       io.to(socket.id).emit('votes', votes);
     } catch (e) {
       io.to(socket.id).emit('error', e.message);
@@ -34,6 +43,19 @@ export const onDisconnect = () => {
 };
 
 export const onNewVote = async (data) => {
+  if (timer <= 0) {
+    io.to(socket.id).emit('error', 'El tiempo de votación terminó!');
+    return;
+  }
+
+  if (timer === 301) {
+    io.to(socket.id).emit(
+      'error',
+      'El tiempo de votación aún no ha comenzado!',
+    );
+    return;
+  }
+
   try {
     const newVote = new VoteModel({
       king: data.king,
@@ -91,4 +113,29 @@ export const onUntie = async (data) => {
   } catch (e) {
     io.to(socket.id).emit('error', e.message);
   }
+};
+
+export const onNewTimer = async () => {
+  io.emit('timer', timer);
+
+  if (timer !== 301) {
+    io.to(socket.id).emit('error', 'El timer ya está corriendo!');
+    return;
+  }
+
+  console.log('\n⏱ Timer started!\n');
+
+  timer = 300;
+
+  // create a new interval - emit every 10 seconds
+  const interval = setInterval(() => {
+    timer -= 20;
+    if (timer <= 20) {
+      timer = 301;
+      console.log('\n⏱ Timer finished!\n');
+      io.emit('timer finished', timer);
+      clearInterval(interval);
+    }
+    io.emit('timer', timer);
+  }, 20000);
 };
