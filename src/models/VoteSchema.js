@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
 
 const voteSchema = new mongoose.Schema({
-  king: String,
-  queen: String,
+  person: String,
   token: {
     type: String,
     required: true,
@@ -11,4 +10,4 @@ const voteSchema = new mongoose.Schema({
   shouldCount: Boolean,
 });
 
-export default mongoose.model('Votes', voteSchema);
+export default mongoose.model('Picassos', voteSchema);

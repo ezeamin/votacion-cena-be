@@ -25,7 +25,7 @@ export const onConnect = async (socket) => {
   if (!socket.recovered) {
     try {
       const votes = await VoteModel.find().select(
-        'king queen shouldCount -_id',
+        'person shouldCount -_id',
       );
       io.to(socket.id).emit('votes', votes);
     } catch (e) {
@@ -54,8 +54,7 @@ export const onNewVote = async (socket, data) => {
 
   try {
     const newVote = new VoteModel({
-      king: data.king,
-      queen: data.queen,
+      person: data.picasso,
       token,
       shouldCount: true,
     });
@@ -79,7 +78,7 @@ export const onNewVote = async (socket, data) => {
   io.to(socket.id).emit('success');
 
   try {
-    const votes = await VoteModel.find().select('king queen shouldCount -_id');
+    const votes = await VoteModel.find().select('person shouldCount -_id');
     io.emit('votes', votes);
   } catch (e) {
     console.log(e.message);
@@ -88,13 +87,12 @@ export const onNewVote = async (socket, data) => {
 };
 
 export const onUntie = async (socket, data) => {
-  const { type, person } = data;
+  const { person } = data;
 
   try {
     const newVote = new VoteModel({
-      king: type === 'king' ? person : undefined,
-      queen: type === 'queen' ? person : undefined,
-      token: `UNTIE-${type}-${(Math.random() * 100000).toString()}`,
+      person,
+      token: `UNTIE-${(Math.random() * 100000).toString()}`,
       shouldCount: false,
     });
 
@@ -105,7 +103,7 @@ export const onUntie = async (socket, data) => {
   }
 
   try {
-    const votes = await VoteModel.find().select('king queen shouldCount -_id');
+    const votes = await VoteModel.find().select('person shouldCount -_id');
     io.emit('votes', votes);
   } catch (e) {
     console.log(e.message);
